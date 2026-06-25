@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
 import {
+  getMeApi,
   updateProfileApi,
   changePasswordApi,
 } from "../../../services/authService.js";
@@ -41,17 +42,32 @@ export default function PatientProfile() {
   const [passSaved, setPassSaved] = useState(false);
   const [passLoading, setPassLoading] = useState(false);
 
-  // Load current user data into form
+  // Fetch full user data from backend on mount
   useEffect(() => {
-    if (user) {
-      setProfile({
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        dateOfBirth: user.dateOfBirth?.split("T")[0] || "",
-      });
-    }
-  }, [user]);
+    const fetchProfile = async () => {
+      try {
+        const data = await getMeApi(token);
+        setProfile({
+          name: data.name || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          dateOfBirth: data.dateOfBirth?.split("T")[0] || "",
+        });
+      } catch (err) {
+        // fallback to context if API fails
+        if (user) {
+          setProfile({
+            name: user.name || "",
+            email: user.email || "",
+            phone: user.phone || "",
+            dateOfBirth: user.dateOfBirth?.split("T")[0] || "",
+          });
+        }
+      }
+    };
+
+    if (token) fetchProfile();
+  }, [token]);
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -60,8 +76,6 @@ export default function PatientProfile() {
 
     try {
       const data = await updateProfileApi(profile, token);
-
-      // Update context with new data
       login({ ...user, name: data.name, email: data.email }, token);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -132,7 +146,6 @@ export default function PatientProfile() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
-        {/* Personal Info */}
         {tab === "info" && (
           <form onSubmit={handleProfileSave} className="space-y-5">
             {saved && (
@@ -151,14 +164,10 @@ export default function PatientProfile() {
                 Full Name
               </label>
               <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:border-accent">
-                <span className="px-3 text-gray-400">
-                  <FaUser size={14} />
-                </span>
+                <span className="px-3 text-gray-400"><FaUser size={14} /></span>
                 <input
                   value={profile.name}
-                  onChange={(e) =>
-                    setProfile({ ...profile, name: e.target.value })
-                  }
+                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                   className="flex-1 py-3 pr-4 text-sm outline-none text-primary"
                   required
                 />
@@ -167,37 +176,25 @@ export default function PatientProfile() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-primary block mb-1.5">
-                  Email
-                </label>
+                <label className="text-sm font-medium text-primary block mb-1.5">Email</label>
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:border-accent">
-                  <span className="px-3 text-gray-400">
-                    <FaEnvelope size={14} />
-                  </span>
+                  <span className="px-3 text-gray-400"><FaEnvelope size={14} /></span>
                   <input
                     type="email"
                     value={profile.email}
-                    onChange={(e) =>
-                      setProfile({ ...profile, email: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                     className="flex-1 py-3 pr-2 text-sm outline-none text-primary"
                     required
                   />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-primary block mb-1.5">
-                  Phone
-                </label>
+                <label className="text-sm font-medium text-primary block mb-1.5">Phone</label>
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:border-accent">
-                  <span className="px-3 text-gray-400">
-                    <FaPhone size={14} />
-                  </span>
+                  <span className="px-3 text-gray-400"><FaPhone size={14} /></span>
                   <input
                     value={profile.phone}
-                    onChange={(e) =>
-                      setProfile({ ...profile, phone: e.target.value })
-                    }
+                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                     className="flex-1 py-3 pr-2 text-sm outline-none text-primary"
                   />
                 </div>
@@ -205,15 +202,11 @@ export default function PatientProfile() {
             </div>
 
             <div>
-              <label className="text-sm font-medium text-primary block mb-1.5">
-                Date of Birth
-              </label>
+              <label className="text-sm font-medium text-primary block mb-1.5">Date of Birth</label>
               <input
                 type="date"
                 value={profile.dateOfBirth}
-                onChange={(e) =>
-                  setProfile({ ...profile, dateOfBirth: e.target.value })
-                }
+                onChange={(e) => setProfile({ ...profile, dateOfBirth: e.target.value })}
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-accent text-primary"
               />
             </div>
@@ -228,65 +221,34 @@ export default function PatientProfile() {
           </form>
         )}
 
-        {/* Change Password */}
         {tab === "password" && (
           <form onSubmit={handlePasswordSave} className="space-y-5">
             {passError && (
-              <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
-                {passError}
-              </div>
+              <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{passError}</div>
             )}
             {passSaved && (
-              <div className="bg-green-50 text-green-600 text-sm px-4 py-3 rounded-lg">
-                ✓ Password changed!
-              </div>
+              <div className="bg-green-50 text-green-600 text-sm px-4 py-3 rounded-lg">✓ Password changed!</div>
             )}
 
             {[
-              {
-                field: "current",
-                label: "Current Password",
-                placeholder: "Enter current password",
-              },
-              {
-                field: "newPass",
-                label: "New Password",
-                placeholder: "Min. 6 characters",
-              },
-              {
-                field: "confirm",
-                label: "Confirm Password",
-                placeholder: "Repeat new password",
-              },
+              { field: "current", label: "Current Password", placeholder: "Enter current password" },
+              { field: "newPass", label: "New Password", placeholder: "Min. 6 characters" },
+              { field: "confirm", label: "Confirm Password", placeholder: "Repeat new password" },
             ].map(({ field, label, placeholder }) => (
               <div key={field}>
-                <label className="text-sm font-medium text-primary block mb-1.5">
-                  {label}
-                </label>
+                <label className="text-sm font-medium text-primary block mb-1.5">{label}</label>
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:border-accent">
-                  <span className="px-3 text-gray-400">
-                    <FaLock size={14} />
-                  </span>
+                  <span className="px-3 text-gray-400"><FaLock size={14} /></span>
                   <input
                     type={showPass[field] ? "text" : "password"}
                     value={passwords[field]}
-                    onChange={(e) =>
-                      setPasswords({ ...passwords, [field]: e.target.value })
-                    }
+                    onChange={(e) => setPasswords({ ...passwords, [field]: e.target.value })}
                     placeholder={placeholder}
                     required
                     className="flex-1 py-3 text-sm outline-none text-primary"
                   />
-                  <button
-                    type="button"
-                    onClick={() => toggleShow(field)}
-                    className="px-3 text-gray-400 hover:text-primary"
-                  >
-                    {showPass[field] ? (
-                      <FaEyeSlash size={14} />
-                    ) : (
-                      <FaEye size={14} />
-                    )}
+                  <button type="button" onClick={() => toggleShow(field)} className="px-3 text-gray-400 hover:text-primary">
+                    {showPass[field] ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
                   </button>
                 </div>
               </div>
