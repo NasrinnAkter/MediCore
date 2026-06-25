@@ -66,6 +66,7 @@ export default function AdminBlog() {
       excerpt: post.excerpt,
       content: post.content,
       category: post.category,
+      authorName: post.authorName || "",
       coverImage: post.coverImage || "",
       tags: post.tags?.join(", ") || "",
       published: post.published,
