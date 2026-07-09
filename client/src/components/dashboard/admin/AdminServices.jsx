@@ -101,10 +101,11 @@ export default function AdminServices() {
         {loading ? (
           <div className="text-center py-10 text-gray-400 text-sm">Loading...</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                {["Name", "Description", "Order", "Actions"].map((h) => (
+                {["Name", "Icon", "Order", "Actions"].map((h) => (
                   <th key={h} className="text-left px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
@@ -116,7 +117,7 @@ export default function AdminServices() {
                 services.map((service) => (
                   <tr key={service._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-4 font-medium text-primary">{service.name}</td>
-                    <td className="px-5 py-4 text-gray-500 max-w-xs truncate">{service.description || "—"}</td>
+                    <td className="px-5 py-4 text-gray-500">{service.icon}</td>
                     <td className="px-5 py-4 text-gray-500">{service.order}</td>
                     <td className="px-5 py-4">
                       <div className="flex gap-2">
@@ -133,6 +134,7 @@ export default function AdminServices() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

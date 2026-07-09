@@ -66,7 +66,6 @@ export default function AdminBlog() {
       excerpt: post.excerpt,
       content: post.content,
       category: post.category,
-      authorName: post.authorName || "",
       coverImage: post.coverImage || "",
       tags: post.tags?.join(", ") || "",
       published: post.published,
@@ -128,7 +127,8 @@ export default function AdminBlog() {
         {loading ? (
           <div className="text-center py-10 text-gray-400 text-sm">Loading...</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 {["Title", "Category", "Author", "Date", "Status", "Actions"].map((h) => (
@@ -170,6 +170,7 @@ export default function AdminBlog() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
