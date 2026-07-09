@@ -140,7 +140,8 @@ export default function AdminDoctors() {
         {loading ? (
           <div className="text-center py-10 text-gray-400 text-sm">Loading...</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 {["Name", "Degree", "Role", "Department", "Actions"].map((h) => (
@@ -188,6 +189,7 @@ export default function AdminDoctors() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

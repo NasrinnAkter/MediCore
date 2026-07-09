@@ -8,14 +8,16 @@ import {
   FaUsers,
   FaNewspaper,
   FaSignOutAlt,
-  FaConciergeBell, // ✅ Added FaConciergeBell import
+  FaConciergeBell,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 import AdminOverview from "./AdminOverview.jsx";
 import AdminDoctors from "./AdminDoctors.jsx";
 import AdminAppointments from "./AdminAppointments.jsx";
 import AdminPatients from "./AdminPatients.jsx";
-import AdminServices from "./AdminServices.jsx"; // ✅ Added AdminServices import
+import AdminServices from "./AdminServices.jsx";
 import AdminBlog from "./AdminBlog.jsx";
 
 const menuItems = [
@@ -23,18 +25,25 @@ const menuItems = [
   { id: "doctors", label: "Manage Doctors", icon: FaUserMd },
   { id: "appointments", label: "Appointments", icon: FaCalendarAlt },
   { id: "patients", label: "Manage Patients", icon: FaUsers },
-  { id: "services", label: "Manage Services", icon: FaConciergeBell }, // ✅ Added services item
+  { id: "services", label: "Manage Services", icon: FaConciergeBell },
   { id: "blog", label: "Manage Blog", icon: FaNewspaper },
 ];
 
 export default function AdminDashboard() {
   const [active, setActive] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false); // NEW: controls mobile sidebar visibility
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  // NEW: closes the sidebar automatically after picking a menu item on mobile
+  const handleMenuClick = (id) => {
+    setActive(id);
+    setSidebarOpen(false);
   };
 
   const renderContent = () => {
@@ -48,7 +57,7 @@ export default function AdminDashboard() {
       case "patients":
         return <AdminPatients />;
       case "services":
-        return <AdminServices />; // ✅ Added services condition mapping
+        return <AdminServices />;
       case "blog":
         return <AdminBlog />;
       default:
@@ -58,7 +67,34 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <aside className="w-64 bg-primary text-white flex flex-col fixed h-full z-40">
+      {/* NEW: Mobile top bar with hamburger toggle — hidden on md and above */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary text-white flex items-center justify-between px-4 z-50">
+        <h2 className="text-xl font-heading font-bold">
+          <span className="text-white">MEDI</span>
+          <span className="text-accent">CORE</span>
+        </h2>
+        <button
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          className="text-white p-2"
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        </button>
+      </div>
+
+      {/* NEW: Dark overlay behind the sidebar on mobile, closes sidebar on tap */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/40 z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — slides in/out on mobile, always visible on md+ */}
+      <aside
+        className={`w-64 bg-primary text-white flex flex-col fixed h-full z-40 transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
         <div className="px-6 py-6 border-b border-white/10">
           <h2 className="text-2xl font-heading font-bold">
             <span className="text-white">MEDI</span>
@@ -75,11 +111,11 @@ export default function AdminDashboard() {
           <p className="text-blue-200 text-xs truncate">{user?.email}</p>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {menuItems.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActive(id)}
+              onClick={() => handleMenuClick(id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                 ${
                   active === id
@@ -111,7 +147,10 @@ export default function AdminDashboard() {
         </div>
       </aside>
 
-      <main className="ml-64 flex-1 p-8">{renderContent()}</main>
+      {/* Main content — no left margin + top padding for mobile bar; md:ml-64 restores desktop layout */}
+      <main className="flex-1 p-4 pt-20 md:pt-8 md:ml-64 md:p-8 w-full min-w-0">
+        {renderContent()}
+      </main>
     </div>
   );
 }

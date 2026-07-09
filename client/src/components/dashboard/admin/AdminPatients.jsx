@@ -29,6 +29,8 @@ export default function AdminPatients() {
   const handleView = async (patient) => {
     setSelected(patient);
     try {
+      // Fetch ALL appointments then filter by patient id on the client
+      // because the backend /appointments endpoint doesn't support ?patient= filter
       const data = await getAppointmentsApi(token);
       const patientAppointments = data.filter(
         (a) => a.patient?._id === patient._id || a.patient === patient._id
@@ -62,17 +64,18 @@ export default function AdminPatients() {
         {loading ? (
           <div className="text-center py-10 text-gray-400 text-sm">Loading...</div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                {["Name", "Email", "Phone", "Date of Birth", "Action"].map((h) => (
+                {["Name", "Email", "Phone", "Date of Birth", "Blood Group", "Action"].map((h) => (
                   <th key={h} className="text-left px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filtered.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-10 text-gray-400">No patients found.</td></tr>
+                <tr><td colSpan={6} className="text-center py-10 text-gray-400">No patients found.</td></tr>
               ) : (
                 filtered.map((p) => (
                   <tr key={p._id} className="hover:bg-gray-50 transition-colors">
@@ -82,6 +85,7 @@ export default function AdminPatients() {
                     <td className="px-5 py-4 text-gray-500">
                       {p.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString() : "—"}
                     </td>
+                    <td className="px-5 py-4 text-gray-500">{p.bloodGroup || "—"}</td>
                     <td className="px-5 py-4">
                       <button onClick={() => handleView(p)} className="text-xs text-blue-500 border border-blue-200 px-3 py-1 rounded-full hover:bg-blue-50 flex items-center gap-1">
                         <FaEye size={11} /> View
@@ -92,6 +96,7 @@ export default function AdminPatients() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
@@ -108,6 +113,7 @@ export default function AdminPatients() {
                 { label: "Email", value: selected.email },
                 { label: "Phone", value: selected.phone || "—" },
                 { label: "Date of Birth", value: selected.dateOfBirth ? new Date(selected.dateOfBirth).toLocaleDateString() : "—" },
+                { label: "Blood Group", value: selected.bloodGroup || "—" },
                 { label: "Total Visits", value: selectedVisits },
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between py-2 border-b border-gray-50">

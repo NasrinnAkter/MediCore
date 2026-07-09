@@ -83,7 +83,8 @@ export default function AdminAppointments() {
             Loading...
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 {[
@@ -160,6 +161,7 @@ export default function AdminAppointments() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>
