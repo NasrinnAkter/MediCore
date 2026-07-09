@@ -129,7 +129,7 @@ export default function PatientProfile() {
       </h1>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         {[
           { id: "info", label: "Personal Information" },
           { id: "password", label: "Change Password" },
@@ -145,7 +145,7 @@ export default function PatientProfile() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 sm:p-8 max-w-2xl">
         {tab === "info" && (
           <form onSubmit={handleProfileSave} className="space-y-5">
             {saved && (
@@ -174,7 +174,7 @@ export default function PatientProfile() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-primary block mb-1.5">Email</label>
                 <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:border-accent">

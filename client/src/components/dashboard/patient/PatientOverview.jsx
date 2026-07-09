@@ -119,7 +119,7 @@ export default function PatientOverview({ setActive }) {
             {appointments.map((apt) => (
               <div
                 key={apt._id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 bg-gray-50 rounded-lg"
               >
                 <div>
                   <p className="text-primary font-medium text-sm">
@@ -129,14 +129,14 @@ export default function PatientOverview({ setActive }) {
                     {apt.doctor?.department}
                   </p>
                 </div>
-                <div className="text-center">
+                <div className="sm:text-center">
                   <p className="text-primary text-sm font-medium">
                     {new Date(apt.date).toLocaleDateString()}
                   </p>
                   <p className="text-gray-400 text-xs">{apt.time}</p>
                 </div>
                 <span
-                  className={`text-xs font-semibold px-3 py-1 rounded-full ${statusStyle[apt.status]}`}
+                  className={`text-xs font-semibold px-3 py-1 rounded-full w-fit ${statusStyle[apt.status]}`}
                 >
                   {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
                 </span>
