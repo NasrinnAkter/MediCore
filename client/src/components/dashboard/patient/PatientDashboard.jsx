@@ -6,7 +6,9 @@ import {
   FaCalendarAlt,
   FaUser,
   FaSignOutAlt,
-  FaArrowLeft, // ✅ Added FaArrowLeft to the icon pool
+  FaArrowLeft,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 import PatientOverview from "./PatientOverview";
@@ -21,12 +23,19 @@ const menuItems = [
 
 export default function PatientDashboard() {
   const [active, setActive] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false); // NEW: controls mobile sidebar visibility
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  // NEW: closes the sidebar automatically after picking a menu item on mobile
+  const handleMenuClick = (id) => {
+    setActive(id);
+    setSidebarOpen(false);
   };
 
   const renderContent = () => {
@@ -44,8 +53,34 @@ export default function PatientDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-primary text-white flex flex-col fixed h-full z-40">
+      {/* NEW: Mobile top bar with hamburger toggle — hidden on md and above */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-primary text-white flex items-center justify-between px-4 z-50">
+        <h2 className="text-xl font-heading font-bold">
+          <span className="text-white">MEDI</span>
+          <span className="text-accent">CORE</span>
+        </h2>
+        <button
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          className="text-white p-2"
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        </button>
+      </div>
+
+      {/* NEW: Dark overlay behind the sidebar on mobile, closes sidebar on tap */}
+      {sidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/40 z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — slides in/out on mobile, always visible on md+ */}
+      <aside
+        className={`w-64 bg-primary text-white flex flex-col fixed h-full z-40 transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+      >
         <div className="px-6 py-6 border-b border-white/10">
           <h2 className="text-2xl font-heading font-bold">
             <span className="text-white">MEDI</span>
@@ -62,11 +97,11 @@ export default function PatientDashboard() {
           <p className="text-blue-200 text-xs truncate">{user?.email}</p>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {menuItems.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActive(id)}
+              onClick={() => handleMenuClick(id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                 ${
                   active === id
@@ -80,7 +115,6 @@ export default function PatientDashboard() {
           ))}
         </nav>
 
-        {/* ✅ Bottom actions layout updated with Go to Home and Sign Out */}
         <div className="px-4 py-6 border-t border-white/10 space-y-1">
           <button
             onClick={() => navigate("/")}
@@ -99,7 +133,10 @@ export default function PatientDashboard() {
         </div>
       </aside>
 
-      <main className="ml-64 flex-1 p-8">{renderContent()}</main>
+      {/* Main content — no left margin + top padding for mobile bar; md:ml-64 restores desktop layout */}
+      <main className="flex-1 p-4 pt-20 md:pt-8 md:ml-64 md:p-8 w-full min-w-0">
+        {renderContent()}
+      </main>
     </div>
   );
 }
