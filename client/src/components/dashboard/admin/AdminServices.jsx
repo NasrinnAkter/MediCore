@@ -105,7 +105,7 @@ export default function AdminServices() {
           <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                {["Name", "Icon", "Order", "Actions"].map((h) => (
+                {["Name", "Description", "Order", "Actions"].map((h) => (
                   <th key={h} className="text-left px-5 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
@@ -117,7 +117,9 @@ export default function AdminServices() {
                 services.map((service) => (
                   <tr key={service._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-4 font-medium text-primary">{service.name}</td>
-                    <td className="px-5 py-4 text-gray-500">{service.icon}</td>
+                    <td className="px-5 py-4 text-gray-500 max-w-xs truncate" title={service.description}>
+                      {service.description}
+                    </td>
                     <td className="px-5 py-4 text-gray-500">{service.order}</td>
                     <td className="px-5 py-4">
                       <div className="flex gap-2">
