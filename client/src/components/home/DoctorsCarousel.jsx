@@ -7,6 +7,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
+import { API_BASE } from "../../services/api.js";
 
 export default function DoctorsCarousel() {
   const [doctors, setDoctors] = useState([]);
@@ -17,7 +18,7 @@ export default function DoctorsCarousel() {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/doctors");
+        const res = await fetch(`${API_BASE}/doctors`);
         const data = await res.json();
         setDoctors(data);
       } catch (err) {
