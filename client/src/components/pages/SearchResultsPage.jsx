@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getDoctorsApi } from "../../services/doctorService.js";
+import { API_BASE } from "../../services/api.js";
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
@@ -19,8 +20,8 @@ const SearchResultsPage = () => {
       try {
         const [doctorsData, newsRes, servicesRes] = await Promise.all([
           getDoctorsApi({ search: query }),
-          fetch(`http://localhost:5000/api/news?search=${encodeURIComponent(query)}&limit=6`),
-          fetch(`http://localhost:5000/api/services`),
+          fetch(`${API_BASE}/news?search=${encodeURIComponent(query)}&limit=6`),
+          fetch(`${API_BASE}/services`),
         ]);
 
         const newsData = await newsRes.json();

@@ -10,7 +10,9 @@ export default function NewsGrid() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch(`${API_BASE}/news?limit=4&page=1`);
+        const res = await fetch(
+          `${API_BASE}/news?limit=4&page=1`,
+        );
         const data = await res.json();
         setNews(data.news);
       } catch (err) {

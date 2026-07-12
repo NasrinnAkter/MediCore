@@ -3,33 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import {
   FaHome,
-  FaUserMd,
   FaCalendarAlt,
-  FaUsers,
-  FaNewspaper,
+  FaUser,
   FaSignOutAlt,
-  FaConciergeBell,
+  FaArrowLeft,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
 
-import AdminOverview from "./AdminOverview.jsx";
-import AdminDoctors from "./AdminDoctors.jsx";
-import AdminAppointments from "./AdminAppointments.jsx";
-import AdminPatients from "./AdminPatients.jsx";
-import AdminServices from "./AdminServices.jsx";
-import AdminBlog from "./AdminBlog.jsx";
+import PatientOverview from "./PatientOverview";
+import PatientAppoinments from "./PatientAppoinments";
+import PatientProfile from "./PatientProfile";
 
 const menuItems = [
   { id: "overview", label: "Overview", icon: FaHome },
-  { id: "doctors", label: "Manage Doctors", icon: FaUserMd },
-  { id: "appointments", label: "Appointments", icon: FaCalendarAlt },
-  { id: "patients", label: "Manage Patients", icon: FaUsers },
-  { id: "services", label: "Manage Services", icon: FaConciergeBell },
-  { id: "blog", label: "Manage Blog", icon: FaNewspaper },
+  { id: "appointments", label: "My Appointments", icon: FaCalendarAlt },
+  { id: "profile", label: "My Profile", icon: FaUser },
 ];
 
-export default function AdminDashboard() {
+export default function PatientDashboard() {
   const [active, setActive] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false); // NEW: controls mobile sidebar visibility
   const { user, logout } = useAuth();
@@ -49,19 +41,13 @@ export default function AdminDashboard() {
   const renderContent = () => {
     switch (active) {
       case "overview":
-        return <AdminOverview setActive={setActive} />;
-      case "doctors":
-        return <AdminDoctors />;
+        return <PatientOverview setActive={setActive} />;
       case "appointments":
-        return <AdminAppointments />;
-      case "patients":
-        return <AdminPatients />;
-      case "services":
-        return <AdminServices />;
-      case "blog":
-        return <AdminBlog />;
+        return <PatientAppoinments />;
+      case "profile":
+        return <PatientProfile />;
       default:
-        return <AdminOverview setActive={setActive} />;
+        return <PatientOverview setActive={setActive} />;
     }
   };
 
@@ -100,10 +86,10 @@ export default function AdminDashboard() {
             <span className="text-white">MEDI</span>
             <span className="text-accent">CORE</span>
           </h2>
-          <p className="text-blue-200 text-xs mt-1">Admin Panel</p>
+          <p className="text-blue-200 text-xs mt-1">Patient Portal</p>
         </div>
 
-        {/* Admin info */}
+        {/* User info */}
         <div className="px-6 py-4 border-b border-white/10">
           <p className="text-white font-semibold text-sm truncate">
             {user?.name}
@@ -134,7 +120,7 @@ export default function AdminDashboard() {
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-blue-200 hover:bg-white/10 hover:text-white transition-all"
           >
-            <FaHome size={16} />
+            <FaArrowLeft size={16} />
             Go to Home
           </button>
           <button
