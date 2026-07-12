@@ -13,6 +13,7 @@ import {
   Droplets,
   Circle,
 } from "lucide-react";
+import { API_BASE } from "../../services/api.js";
 
 // Map icon string names (stored in DB) to actual Lucide components
 const iconMap = {
@@ -40,7 +41,7 @@ const ServicesPage = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/services");
+        const res = await fetch(`${API_BASE}/services`);
         const data = await res.json();
         setServices(data);
         // Select by id from navigation state, or default to first
