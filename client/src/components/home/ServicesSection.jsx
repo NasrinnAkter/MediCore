@@ -13,6 +13,7 @@ import {
   Droplets,
   Circle,
 } from "lucide-react";
+import { API_BASE } from "../../services/api.js";
 
 const iconMap = {
   Brain,
@@ -49,7 +50,7 @@ export default function ServicesSection() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/services");
+        const res = await fetch(`${API_BASE}/services`);
         const data = await res.json();
         setServices(data);
         if (data.length > 0) setActiveId(data[0]._id);
