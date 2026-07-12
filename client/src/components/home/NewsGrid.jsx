@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../../services/api.js";
 
 export default function NewsGrid() {
   const navigate = useNavigate();
@@ -9,9 +10,7 @@ export default function NewsGrid() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:5000/api/news?limit=4&page=1",
-        );
+        const res = await fetch(`${API_BASE}/news?limit=4&page=1`);
         const data = await res.json();
         setNews(data.news);
       } catch (err) {
