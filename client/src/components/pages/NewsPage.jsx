@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../../services/api.js";
 
 const NewsPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const NewsPage = () => {
         if (search) params.append("search", search);
         if (selectedCategory) params.append("category", selectedCategory);
 
-        const res = await fetch(`http://localhost:5000/api/news?${params}`);
+        const res = await fetch(`${API_BASE}/news?${params}`);
         const data = await res.json();
         setNews(data.news);
         setTotal(data.total);
@@ -52,7 +53,7 @@ const NewsPage = () => {
     const fetchRecent = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/news?limit=4&page=1",
+          `${API_BASE}/news?limit=4&page=1`,
         );
         const data = await res.json();
         setRecentPosts(data.news);
