@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE } from "../../services/api.js";
 
 const NewsDetailPage = () => {
   const { id } = useParams();
@@ -11,7 +12,7 @@ const NewsDetailPage = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/news/${id}`);
+        const res = await fetch(`${API_BASE}/news/${id}`);
         if (!res.ok) {
           setNotFound(true);
           return;
